@@ -14,7 +14,7 @@ jobs:
       - name: Configure Android SDK and TTS Permissions
         run: |
           sed -i 's/<application/<queries><intent><action android:name="android.intent.action.TTS_SERVICE" \/><\/intent><\/queries><application/' android/app/src/main/AndroidManifest.xml
-          sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/g' android/app/build.gradle*
+          sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 36/g' android/app/build.gradle*
           sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 21/g' android/app/build.gradle*
       - name: Download Full 114 Surahs Quran JSON
         run: |
