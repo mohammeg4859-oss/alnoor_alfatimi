@@ -1,0 +1,29 @@
+name: Build Alnoor Alfatimi APK
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter create .
+      - name: Add TTS Permission to AndroidManifest
+        run: |
+          sed -i 's/<application/<queries><intent><action android:name="android.intent.action.TTS_SERVICE" \/><\/intent><\/queries><application/' android/app/src/main/AndroidManifest.xml
+      - name: Download Full 114 Surahs Quran JSON
+        run: |
+          mkdir -p assets
+          curl -L -s "https://cdn.jsdelivr.net/npm/quran-json@3.1.2/dist/quran.json" -o assets/quran.json
+      - run: flutter pub get
+      - name: Generate App Icon if exists
+        run: |
+          if [ -f "assets/icon/icon.png" ]; then
+            dart run flutter_launcher_icons
+          fi
+      - run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: alnoor-alfatimi-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
