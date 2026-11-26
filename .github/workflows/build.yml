@@ -8,10 +8,14 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - run: flutter create .
-      - name: Add TTS Permission to AndroidManifest
+      - run: |
+          flutter create .
+          rm -rf test
+      - name: Configure Android SDK and TTS Permissions
         run: |
           sed -i 's/<application/<queries><intent><action android:name="android.intent.action.TTS_SERVICE" \/><\/intent><\/queries><application/' android/app/src/main/AndroidManifest.xml
+          sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/g' android/app/build.gradle*
+          sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 21/g' android/app/build.gradle*
       - name: Download Full 114 Surahs Quran JSON
         run: |
           mkdir -p assets
@@ -22,7 +26,7 @@ jobs:
           if [ -f "assets/icon/icon.png" ]; then
             dart run flutter_launcher_icons
           fi
-      - run: flutter build apk --release
+      - run: flutter build apk --release --no-tree-shake-icons
       - uses: actions/upload-artifact@v4
         with:
           name: alnoor-alfatimi-apk
